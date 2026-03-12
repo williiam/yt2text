@@ -71,6 +71,8 @@ function fetchTranscript(videoId) {
     const outputTemplate = path.join(tmpDir, "sub");
 
     const args = [
+      "-m",
+      "yt_dlp",
       "--write-auto-sub",
       "--write-sub",
       "--sub-lang",
@@ -83,17 +85,7 @@ function fetchTranscript(videoId) {
       `https://www.youtube.com/watch?v=${videoId}`,
     ];
 
-    // Use local ./yt-dlp binary if available, otherwise fall back to python module
-    const localBin = path.join(__dirname, "yt-dlp");
-    const useLocal = fs.existsSync(localBin);
-    const cmd = useLocal ? localBin : "python";
-    const cmdArgs = useLocal ? args : ["-m", "yt_dlp", ...args];
-
-    console.log(`Using: ${cmd}, args: ${cmdArgs.join(" ")}`);
-    execFile(cmd, cmdArgs, { timeout: 30000 }, (err, stdout, stderr) => {
-      console.log("yt-dlp stdout:", stdout);
-      console.log("yt-dlp stderr:", stderr);
-      if (err) console.log("yt-dlp error:", err.message);
+    execFile("python", args, { timeout: 30000 }, (err, stdout, stderr) => {
       // Find the VTT file
       try {
         const files = fs.readdirSync(tmpDir);
