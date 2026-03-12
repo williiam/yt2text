@@ -3,12 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <title>YouTube Transcriber</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-    <h1>YouTube Transcriber</h1>
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <h1>YouTube Transcriber</h1>
+      <a href="/explore.html" style="color:#888;text-decoration:none;font-size:0.9rem;padding:6px 14px;border:1px solid #333;border-radius:6px;">Explorer</a>
+    </div>
     <p class="subtitle">Paste a YouTube URL to get its transcript</p>
 
     <div class="input-group">
@@ -18,21 +22,47 @@
         placeholder="https://www.youtube.com/watch?v=..."
         autocomplete="off"
       />
+      <select id="lang-select">
+        <option value="en">EN</option>
+        <option value="zh-Hant">ZH</option>
+      </select>
       <button id="fetch-btn">Get Transcript</button>
+    </div>
+
+    <div id="history" class="history hidden">
+      <div class="history-header">
+        <h2>History</h2>
+        <button id="clear-history-btn" class="clear-btn">Clear</button>
+      </div>
+      <ul id="history-list" class="history-list"></ul>
     </div>
 
     <div id="error" class="error hidden"></div>
     <div id="loading" class="loading hidden">Fetching transcript...</div>
 
     <div id="result" class="result hidden">
+      <div id="player-wrap" class="player-wrap hidden">
+        <div id="yt-player"></div>
+      </div>
+      <div class="ai-bar hidden" id="ai-bar">
+        <span class="ai-label">Summarize with:</span>
+        <button class="ai-btn" data-ai="chatgpt">ChatGPT</button>
+        <button class="ai-btn" data-ai="gemini">Gemini</button>
+        <button class="ai-btn" data-ai="claude">Claude</button>
+        <button class="ai-btn" data-ai="grok">Grok</button>
+      </div>
       <div class="result-header">
         <h2>Transcript</h2>
-        <button id="copy-btn" class="copy-btn">Copy to Clipboard</button>
+        <div class="result-actions">
+          <button id="toggle-view-btn" class="copy-btn">Full Text</button>
+          <button id="copy-btn" class="copy-btn">Copy to Clipboard</button>
+        </div>
       </div>
       <div id="transcript-text" class="transcript-text"></div>
     </div>
   </div>
 
+  <script src="https://www.youtube.com/iframe_api"></script>
   <script src="app.js"></script>
 </body>
 </html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <title>YouTube Explorer</title>
+  <link rel="stylesheet" href="explore.css">
+</head>
+<body>
+  <div class="layout">
+    <!-- Sidebar: Active Topics -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>My Topics</h2>
+        <button id="clear-topics" class="clear-btn" title="Clear all">Clear</button>
+      </div>
+      <div id="active-topics" class="active-topics"></div>
+      <div class="sidebar-hint">Click cards or keywords to add topics</div>
+      <div class="sidebar-footer">
+        <a href="/" class="nav-link">Transcriber</a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+      <div class="top-bar">
+        <h1>YouTube Explorer</h1>
+        <div class="search-bar">
+          <input type="text" id="search-input" placeholder="Start with a topic..." autocomplete="off" />
+          <button id="search-btn">Explore</button>
+        </div>
+      </div>
+
+      <!-- Breadcrumb trail -->
+      <div id="trail" class="trail hidden"></div>
+
+      <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+        <span>Discovering videos...</span>
+      </div>
+      <div id="error" class="error hidden"></div>
+
+      <!-- Suggested keywords extracted from results -->
+      <div id="discover-bar" class="discover-bar hidden">
+        <span class="discover-label">Discover:</span>
+        <div id="discover-keywords" class="discover-keywords"></div>
+      </div>
+
+      <!-- Video grid -->
+      <div id="grid" class="video-grid"></div>
+    </main>
+  </div>
+
+  <script src="explore.js"></script>
+</body>
+</html>
