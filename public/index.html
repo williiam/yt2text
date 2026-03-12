@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Transcriber</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>YouTube Transcriber</h1>
+    <p class="subtitle">Paste a YouTube URL to get its transcript</p>
+
+    <div class="input-group">
+      <input
+        type="text"
+        id="url-input"
+        placeholder="https://www.youtube.com/watch?v=..."
+        autocomplete="off"
+      />
+      <button id="fetch-btn">Get Transcript</button>
+    </div>
+
+    <div id="error" class="error hidden"></div>
+    <div id="loading" class="loading hidden">Fetching transcript...</div>
+
+    <div id="result" class="result hidden">
+      <div class="result-header">
+        <h2>Transcript</h2>
+        <button id="copy-btn" class="copy-btn">Copy to Clipboard</button>
+      </div>
+      <div id="transcript-text" class="transcript-text"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
