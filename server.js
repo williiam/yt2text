@@ -89,7 +89,11 @@ function fetchTranscript(videoId) {
     const cmd = useLocal ? localBin : "python";
     const cmdArgs = useLocal ? args : ["-m", "yt_dlp", ...args];
 
+    console.log(`Using: ${cmd}, args: ${cmdArgs.join(" ")}`);
     execFile(cmd, cmdArgs, { timeout: 30000 }, (err, stdout, stderr) => {
+      console.log("yt-dlp stdout:", stdout);
+      console.log("yt-dlp stderr:", stderr);
+      if (err) console.log("yt-dlp error:", err.message);
       // Find the VTT file
       try {
         const files = fs.readdirSync(tmpDir);
