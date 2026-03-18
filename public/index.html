@@ -51,6 +51,7 @@
         <button class="ai-btn" data-ai="claude">Claude</button>
         <button class="ai-btn" data-ai="grok">Grok</button>
       </div>
+      <div id="source-badge" class="source-badge hidden"></div>
       <div class="result-header">
         <h2>Transcript</h2>
         <div class="result-actions">
@@ -59,6 +60,24 @@
         </div>
       </div>
       <div id="transcript-text" class="transcript-text"></div>
+
+      <!-- Q&A Section -->
+      <div id="qa-section" class="qa-section hidden">
+        <div class="qa-header">
+          <h2>Q&A</h2>
+          <select id="qa-model-select" class="qa-model-select">
+            <option value="gemini">Gemini</option>
+            <option value="chatgpt" disabled>ChatGPT</option>
+            <option value="claude" disabled>Claude</option>
+            <option value="grok" disabled>Grok</option>
+          </select>
+        </div>
+        <div id="qa-history" class="qa-history"></div>
+        <div class="qa-input-row">
+          <input type="text" id="qa-input" class="qa-input" placeholder="Ask a question about the transcript..." autocomplete="off" />
+          <button id="qa-send" class="qa-send">Ask</button>
+        </div>
+      </div>
     </div>
   </div>
 

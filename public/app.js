@@ -12,6 +12,12 @@ const langSelect = document.getElementById("lang-select");
 const playerWrap = document.getElementById("player-wrap");
 const aiBar = document.getElementById("ai-bar");
 const toggleViewBtn = document.getElementById("toggle-view-btn");
+const sourceBadge = document.getElementById("source-badge");
+const qaSection = document.getElementById("qa-section");
+const qaHistory = document.getElementById("qa-history");
+const qaInput = document.getElementById("qa-input");
+const qaSend = document.getElementById("qa-send");
+const qaModelSelect = document.getElementById("qa-model-select");
 
 const HISTORY_KEY = "yt-transcriber-history";
 let viewMode = "segments"; // "segments" or "fulltext"
@@ -27,6 +33,7 @@ let ytPlayer = null;
 let ytPlayerReady = false;
 let currentVideoId = null;
 let currentSegments = [];
+let qaConversation = []; // multi-turn Q&A history
 
 // YouTube IFrame API callback
 window.onYouTubeIframeAPIReady = () => {
@@ -71,7 +78,6 @@ function seekTo(seconds) {
 }
 
 function parseTimestamp(ts) {
-  // Handle "HH:MM:SS.mmm" or numeric seconds
   if (typeof ts === "number") return ts;
   const parts = String(ts).split(":");
   if (parts.length === 3) {
@@ -175,9 +181,22 @@ async function fetchTranscript() {
       initPlayer(videoId);
     }
 
+    // Show source badge if whisper
+    if (data.source === "whisper") {
+      sourceBadge.textContent = "Transcribed with Whisper (no subtitles available)";
+      sourceBadge.classList.remove("hidden");
+    } else {
+      sourceBadge.classList.add("hidden");
+    }
+
     renderSegments(data.segments);
     aiBar.classList.remove("hidden");
     resultEl.classList.remove("hidden");
+
+    // Show Q&A section and reset conversation
+    qaSection.classList.remove("hidden");
+    qaConversation = [];
+    qaHistory.innerHTML = "";
 
     const langName =
       langSelect.options[langSelect.selectedIndex]?.textContent || lang;
@@ -275,7 +294,6 @@ function renderHistory() {
       urlInput.value = item.url;
       errorEl.classList.add("hidden");
 
-
       const videoId = extractVideoId(item.url) || item.videoId;
       if (videoId) {
         initPlayer(videoId);
@@ -284,12 +302,17 @@ function renderHistory() {
       if (item.segments) {
         renderSegments(item.segments);
       } else {
-        // Legacy history without segments
         transcriptText.innerHTML = "";
         transcriptText.textContent = item.fullText;
       }
       aiBar.classList.remove("hidden");
       resultEl.classList.remove("hidden");
+      sourceBadge.classList.add("hidden");
+
+      // Show Q&A and reset
+      qaSection.classList.remove("hidden");
+      qaConversation = [];
+      qaHistory.innerHTML = "";
     });
 
     historyList.appendChild(li);
@@ -323,6 +346,57 @@ document.querySelectorAll(".ai-btn").forEach((btn) => {
       window.open(url, "_blank");
     });
   });
+});
+
+// --- Q&A ---
+
+async function askQuestion() {
+  const question = qaInput.value.trim();
+  if (!question || currentSegments.length === 0) return;
+
+  // Add question to UI
+  const qDiv = document.createElement("div");
+  qDiv.className = "qa-message qa-question";
+  qDiv.textContent = question;
+  qaHistory.appendChild(qDiv);
+
+  // Add loading indicator
+  const aDiv = document.createElement("div");
+  aDiv.className = "qa-message qa-answer";
+  aDiv.textContent = "Thinking...";
+  qaHistory.appendChild(aDiv);
+
+  qaInput.value = "";
+  qaSend.disabled = true;
+  qaHistory.scrollTop = qaHistory.scrollHeight;
+
+  try {
+    const fullText = getFullText(currentSegments);
+    const model = qaModelSelect.value;
+
+    const res = await fetch("/api/ai/ask", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: fullText, model, question }),
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "AI ask failed");
+
+    aDiv.textContent = data.answer;
+    qaConversation.push({ question, answer: data.answer });
+  } catch (err) {
+    aDiv.textContent = "Error: " + err.message;
+    aDiv.classList.add("qa-error");
+  } finally {
+    qaSend.disabled = false;
+    qaHistory.scrollTop = qaHistory.scrollHeight;
+  }
+}
+
+qaSend.addEventListener("click", askQuestion);
+qaInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") askQuestion();
 });
 
 renderHistory();

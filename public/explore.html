@@ -28,6 +28,28 @@
         <h1>YouTube Explorer</h1>
         <div class="search-bar">
           <input type="text" id="search-input" placeholder="Start with a topic..." autocomplete="off" />
+          <select id="order-select" class="filter-select" title="Sort by">
+            <option value="relevance">Relevance</option>
+            <option value="date">Newest</option>
+            <option value="viewCount">Most Viewed</option>
+            <option value="rating">Top Rated</option>
+          </select>
+          <select id="region-select" class="filter-select" title="Region">
+            <option value="">All Regions</option>
+            <option value="TW">Taiwan</option>
+            <option value="US">USA</option>
+            <option value="JP">Japan</option>
+            <option value="CN">China</option>
+            <option value="HK">Hong Kong</option>
+            <option value="KR">Korea</option>
+            <option value="GB">UK</option>
+          </select>
+          <select id="model-select" class="filter-select" title="AI Model">
+            <option value="gemini">Gemini</option>
+            <option value="chatgpt" disabled>ChatGPT</option>
+            <option value="claude" disabled>Claude</option>
+            <option value="grok" disabled>Grok</option>
+          </select>
           <button id="search-btn">Explore</button>
         </div>
       </div>
@@ -50,6 +72,16 @@
       <!-- Video grid -->
       <div id="grid" class="video-grid"></div>
     </main>
+
+    <!-- Related Videos Panel (right sidebar) -->
+    <aside id="related-panel" class="related-panel hidden">
+      <div class="related-panel-header">
+        <h2>Related Videos</h2>
+        <button id="close-related" class="related-close">&times;</button>
+      </div>
+      <div id="related-source" class="related-source"></div>
+      <div id="related-list" class="related-list"></div>
+    </aside>
   </div>
 
   <script src="explore.js"></script>
